@@ -23,6 +23,7 @@ const userSchema = new Schema(
             }
         ],
         friends: [
+            // should we validate that friendId cannot be user's own id?
             {
                 type: Schema.Types.ObjectId,
                 ref: 'User'
