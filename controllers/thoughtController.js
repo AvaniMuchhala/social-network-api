@@ -63,14 +63,24 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    // Delete a thought by its _id
+    // Delete a thought by its _id, remove thought from User's thought field
     async deleteThought(req, res) {
         try {
             const result = await Thought.deleteOne({ _id: req.params.thoughtId });
             if (!result) {
                 res.status(404).json({ message: 'No thought found with that ID' });
             } else {
-                res.status(200).json(result);
+                // Find User that has same thoughtId provided in req.params
+                // Pull/remove the thought's ID from User's thoughts field
+                const updatedUser = await User.findOneAndUpdate(
+                    { thoughts: req.params.thoughtId },
+                    { $pull: { thoughts: req.params.thoughtId } },
+                    { new: true }
+                );
+                res.status(200).json({
+                    message: 'Deleted thought!',
+                    updatedUser: updatedUser
+                });
             }
         } catch (err) {
             console.error(err);
