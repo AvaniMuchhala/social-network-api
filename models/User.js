@@ -13,7 +13,6 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            // use match or validate key?
             match: /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
         },
         thoughts: [
@@ -23,7 +22,6 @@ const userSchema = new Schema(
             }
         ],
         friends: [
-            // should we validate that friendId cannot be user's own id?
             {
                 type: Schema.Types.ObjectId,
                 ref: 'User'

@@ -16,7 +16,11 @@ module.exports = {
         try {
             const user = await User.findOne({ _id: req.params.userId })
                 .populate('thoughts').populate('friends').select('-__v');
-            res.status(200).json(user);
+            if (!user) {
+                res.status(404).json({ message: 'No user found with that ID' });
+            } else {
+                res.status(200).json(user);
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
@@ -41,7 +45,11 @@ module.exports = {
                 // Validate new info in req.body, return updated user
                 { runValidators: true, new: true }
             ).select('-__v');
-            res.status(200).json(updatedUser);
+            if (!updatedUser) {
+                res.status(404).json({ message: 'No user found with that ID' });
+            } else {
+                res.status(200).json(updatedUser);
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
@@ -67,13 +75,23 @@ module.exports = {
     // Add new friend to user's friend list
     async addFriend(req, res) {
         try {
-            const newFriend = await User.findOneAndUpdate(
-                { _id: req.params.userId },
-                { $addToSet: { friends: req.params.friendId } },
-                // Return the updated user with new friend added
-                { new: true }
-            ).select('-__v');
-            res.status(200).json(newFriend);
+            // Don't allow user to friend themselves
+            if (req.params.userId === req.params.friendId) {
+                res.status(400).json({ message: 'User is not allowed to friend themselves!' });
+            } else {
+                const newFriend = await User.findOneAndUpdate(
+                    { _id: req.params.userId },
+                    { $addToSet: { friends: req.params.friendId } },
+                    // Return the updated user with new friend added
+                    { new: true }
+                ).select('-__v');
+                
+                if (!newFriend) {
+                    res.status(404).json({ message: 'No user found with that ID' });
+                } else {
+                    res.status(200).json(newFriend);
+                }
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
@@ -87,7 +105,12 @@ module.exports = {
                 { $pull: { friends: req.params.friendId } },
                 { runValidators: true, new: true }
             );
-            res.status(200).json(result);
+
+            if (!result) {
+                res.status(404).json({ message: 'No user found with that ID' });
+            } else {
+                res.status(200).json(result);
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);

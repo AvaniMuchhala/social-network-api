@@ -15,7 +15,11 @@ module.exports = {
     async getSingleThought(req, res) {
         try {
             const thought = await Thought.findOne({ _id: req.params.thoughtId });
-            res.status(200).json(thought);
+            if (!thought) {
+                res.status(404).json({ message: 'No thought found with that ID' });
+            } else {
+                res.status(200).json(thought);
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
@@ -49,7 +53,11 @@ module.exports = {
                 { $set: req.body },
                 { new: true }
             );
-            res.status(200).json(updatedThought);
+            if (!updatedThought) {
+                res.status(404).json({ message: 'No thought found with that ID' });
+            } else {
+                res.status(200).json(updatedThought);
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
@@ -59,7 +67,11 @@ module.exports = {
     async deleteThought(req, res) {
         try {
             const result = await Thought.deleteOne({ _id: req.params.thoughtId });
-            res.status(200).json(result);
+            if (!result) {
+                res.status(404).json({ message: 'No thought found with that ID' });
+            } else {
+                res.status(200).json(result);
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
@@ -73,7 +85,11 @@ module.exports = {
                 { $addToSet: { reactions: req.body } },
                 { new: true }
             );
-            res.status(200).json(thoughtWithReaction);
+            if (!thoughtWithReaction) {
+                res.status(404).json({ message: 'No thought found with that ID' });
+            } else {
+                res.status(200).json(thoughtWithReaction);
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
