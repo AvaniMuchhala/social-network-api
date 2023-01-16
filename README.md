@@ -20,14 +20,24 @@ npm install
 
 ## Usage
 
-Open the index.js in the Integrated Terminal in your editor. Run the following command in the terminal to use this application:
+Open your terminal in this repository. You can seed the database with mock users and thoughts by running the following command in the terminal:
+```
+npm run seed
+```
+
+Run the following command in the terminal to start the server and use this application:
 ```
 nodemon index.js
 ```
 
 Test the different API endpoints/routes using an application like Insomnia.
 
-Here is a walkthrough video demonstrating the functionality of the app.
+Here is a [walkthrough video](https://drive.google.com/file/d/1TdU-FjFmqFOE3ZIJF0j7DbV7nCojW5Tz/view?usp=sharing) demonstrating the functionality of the app.
+
+Here are screenshots showing the results of the "GET all users" and "GET user by ID" routes:
+![get all users screenshot](./assets/get-users-pic.png)
+
+![get user by ID screenshot](./assets/get-user-id-pic.png)
 
 ## License
 
