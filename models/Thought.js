@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const dayjs = require('dayjs');
 const reactionSchema = require('./Reaction');
 
 // Schema to create Thought model
@@ -13,7 +14,7 @@ const thoughtSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now,
-            // getter method to format timestamp
+            get: formatTimestamp
         },
         username: {
             type: String,
@@ -21,14 +22,20 @@ const thoughtSchema = new Schema(
         }, 
         reactions: [reactionSchema]
     },
-    // Turn virtuals on to see them in response
+    // Turn virtuals & getters on to see them in response
     {
         toJSON: {
             virtuals: true,
+            getters: true
         },
         id: false
     }
 );
+
+// Getter function to format timestamp on query
+function formatTimestamp (time) {
+    return dayjs(time).format('MMM D, YYYY [at] h:mm A');
+}
 
 // 'reactionCount' virtual property
 thoughtSchema.virtual('reactionCount').get(function () {

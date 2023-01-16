@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 module.exports = {
     // Get all users
@@ -47,11 +47,18 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    // Delete a user by its _id
+    // Delete a user by its _id, along with their associated thoughts
     async deleteUser(req, res) {
         try {
-            const result = await User.deleteOne({ _id: req.params.userId });
-            res.status(200).json(result);
+            const user = await User.findOneAndDelete({ _id: req.params.userId });
+            if (!user) {
+                res.status(404).json({ message: 'No user found with that ID' });
+            } else {
+                // If user with same ID found/deleted, delete their associated thoughts
+                // Delete thoughts with same IDs listed in User's thoughts array field
+                await Thought.deleteMany({ _id: { $in: user.thoughts } });
+                res.status(200).json({ message: `User ${user.username} and their thoughts deleted` });
+            }
         } catch (err) {
             console.error(err);
             res.status(500).json(err);
